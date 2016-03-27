@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="app.css">
+</head>
+<body>
+<section class="section-wrap put-section-4">
+    <div class="section section-1">
+        <div class="title active">
+            <p class="tit">支持手机端的CSS3全屏上下滚动视差特效</p>
+        </div>
+    </div>
+    <div class="section section-2">
+        <div class="title">
+            <p class="tit">这里是第一屏</p>
+        </div>
+    </div>
+    <div class="section section-3">
+        <div class="title">
+            <p class="tit">这里是第二屏</p>
+        </div>
+    </div>
+    <div class="section section-4">
+        <div class="title">
+            <p class="tit">这里是第三屏</p>
+        </div>
+    </div>
+    <div class="section section-5">
+        <div class="title">
+            <p class="tit">这里是第四屏</p>
+        </div>
+    </div>
+</section>
+<ul class="section-btn">
+    <li class=""></li>
+    <li class=""></li>
+    <li class=""></li>
+    <li class=""></li>
+    <li class="on"></li>
+</ul>
+<div class="arrow">«</div>
+<script src="jquery-1.11.3.min.js"></script>
+<!--//此处引用：鼠标滚轮mousewheel插件-->
+<script src="mousewheel.js"></script>
+<script type="text/javascript">
+
+    $(function(){
+        var i=0;
+        var $btn = $('.section-btn li'),
+                $wrap = $('.section-wrap'),
+                $arrow = $('.arrow');
+
+        /*当前页面赋值*/
+        function up(){i++;if(i==$btn.length){i=0};}
+        function down(){i--;if(i<0){i=$btn.length-1};}
+
+        /*页面滑动*/
+        function run(){
+            $btn.eq(i).addClass('on').siblings().removeClass('on');
+            $wrap.attr("class","section-wrap").addClass(function() {
+                return "put-section-"+i; }).find('.section').eq(i).find('.title').addClass('active');
+        };
+
+        /*右侧按钮点击*/
+        $btn.each(function(index) {
+            $(this).click(function(){
+                i=index;
+                run();
+            })
+        });
+
+        /*翻页按钮点击*/
+        $arrow.one('click',go);//one() 方法为被选元素附加一个或多个事件处理程序，并规定当事件发生时运行的函数。
+        function go(){
+            up();run();
+            setTimeout(function(){$arrow.one('click',go)},1000)
+        };
+
+        /*响应鼠标*/
+        /*参数delta可以获取鼠标滚轮的方向和速度。
+         如果delta的值是负的即-1，那么滚轮就是向下滚动，正的1就是向上。*/
+        $wrap.one('mousewheel',mouse_);
+        function mouse_(event){
+            if(event.deltaY<0) {up()}
+            else{down()}
+            run();
+            setTimeout(function(){$wrap.one('mousewheel',mouse_)},1000)
+        };
+
+        /*响应键盘上下键*/
+        $(document).one('keydown',k);
+        function k(event){
+            var e=event||window.event;
+            var key=e.keyCode||e.which||e.charCode;
+            switch(key)	{
+                case 38: down();run();
+                    break;
+                case 40: up();run();
+                    break;
+            };
+            setTimeout(function(){$(document).one('keydown',k)},1000);
+        }
+    });
+</script>
+</body>
+</html>
